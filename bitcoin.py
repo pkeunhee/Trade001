@@ -7,7 +7,7 @@ import db.dbconn as dbconn
 
 yf.pdr_override()
 mk = dbconn.MarketDB()
-data = pdr.get_data_yahoo('BTC-USD', start=datetime.datetime(2023,5,10), end=datetime.datetime(2023,8,1))
+data = pdr.get_data_yahoo('BTC-USD', start=datetime.datetime(2023,5,10), end=datetime.datetime(2023,8,14))
 for idx, row in data.iterrows():
     date = idx.strftime('%Y-%m-%d')
     price = round(row['Adj Close'], 2)

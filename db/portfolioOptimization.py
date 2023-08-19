@@ -15,7 +15,7 @@ df = pd.DataFrame()
 
 for s in stocks:
     df1 = mk.get_daily_stock_price(s, start_date, end_date)
-    df[s] = df1['price']
+    df[s] = df1['endPrice']
 
 
 daily_ret = df.pct_change() # 일간 수익률 (변동률)

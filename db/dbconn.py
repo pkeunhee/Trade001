@@ -29,7 +29,7 @@ class MarketDB:
 
     def insertStockDatePoint(self, code, date, price, tradeCnt):
         sql = f"INSERT IGNORE INTO stock_date_point" \
-              f" (code, `date`, price, tradeCnt, regDate)" \
+              f" (code, `date`, endPrice, tradeCnt, regDate)" \
               f" VALUES" \
               f" ('{code}', '{date}', '{price}', '{tradeCnt}', now())"
 
