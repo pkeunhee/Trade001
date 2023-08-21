@@ -5,7 +5,7 @@ start_date = '2020-05-01'
 end_date = '2023-04-01'
 
 mk = dbconn.MarketDB()
-df = mk.get_daily_stock_price('161890', start_date, end_date)
+df = mk.get_daily_stock_price('035420', start_date, end_date)
   
 df['MA20'] = df['endPrice'].rolling(window=20).mean()
 df['stddev'] = df['endPrice'].rolling(window=20).std()
