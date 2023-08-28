@@ -46,6 +46,25 @@ class MarketDB:
         df.index = pd.to_datetime(df.index)
         return df
 
+    def get_minute_stock_price(self, code, start_date=None, end_date=None):
+        sql = \
+            f"SELECT " \
+            f"sp.code as code, " \
+            f"sp.date as date, " \
+            f"sp.close as close, " \
+            f"sp.open as open, " \
+            f"sp.high as high, " \
+            f"sp.low as low, " \
+            f"sp.volume as volume " \
+            f"FROM stock_date_point2 sp " \
+            f"WHERE sp.code = '{code}' " \
+            f"AND `date` BETWEEN '{start_date}' AND '{end_date}'"
+
+        df = pd.read_sql(sql, self.conn)
+        df.index = df['date']
+        df.index = pd.to_datetime(df.index)
+        return df
+
     def get_daily_apt_price(self, loc1, loc2, loc3, name, type, startSize, endSize, start_date=None, end_date=None):
         sql = f"SELECT * FROM apt_transaction2 WHERE loc1 = '{loc1}'" \
               f" and loc2 = '{loc2}' and loc3 = '{loc3}' and name = '{name}' and type = '{type}' and size BETWEEN '{startSize}' AND '{endSize}' and date >= '{start_date}' and date <= '{end_date}' order by date"
