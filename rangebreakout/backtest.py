@@ -5,7 +5,7 @@ from db import dbconn
 
 class OpeningRangeBreakout(backtrader.Strategy):
     params = dict(
-        num_opening_bars=15 # 오프닝 끝이 되는 분
+        num_opening_bars = 15 # 오프닝 끝이 되는 분
     )
 
     def __init__(self):
@@ -44,7 +44,7 @@ class OpeningRangeBreakout(backtrader.Strategy):
         current_bar_datetime = self.data.num2date(self.data.datetime[0]) # 현재 데이터의 시간
         previous_bar_datetime = self.data.num2date(self.data.datetime[-1]) # 현재에서 바로 직전 데이터의 시간
 
-        # 두 데이터의 날짜부분이 다른 경우 현재의 가격 사용
+        # 두 데이터의 날짜부분이 다른 경우 현재 가격 사용하며 시작. 개장 시점인 경우는 현재 날짜와 이전날짜가 다른 상황이다.
         if current_bar_datetime.date() != previous_bar_datetime.date():
             self.opening_range_low = self.data.low[0]
             self.opening_range_high = self.data.high[0]
@@ -73,15 +73,15 @@ class OpeningRangeBreakout(backtrader.Strategy):
                 self.order = self.buy()
                 self.bought_today = True
 
-            # 현재가가 (오프닝 고점 - 오프닝갭) 이하가 되면 매도하여 손실 회피
+            # 현재가가 (오프닝 고점 - 오프닝갭) 이하가 되면 매도하여 MDD 최소화
             if self.position and (self.data.close[0] < (self.opening_range_high - self.opening_high_low_range)):
                 self.order = self.close()
 
-            # 하루를 넘기지 않도록 당일 청산 한다. 남아 있으면 종가에는 무조건 판다.
-            if self.position and current_bar_datetime.time() >= time(15, 35, 0):
+            # 매수한게 있는데 시장 닫는 시간이 된 경우. 종가에 그냥 청산한다.
+            if self.position and current_bar_datetime.time() >= time(15, 19, 0):
                 # self.log("RUNNING OUT OF TIME - LIQUIDATING POSITION")
-                self.log("다음날 시초에 청산 하도록 하자!")
-                self.close()
+                self.log("종가에 청산 한다.")
+                self.close() # 만약 시간을 종료 시간 (15:30:00) 으로 설정 했다면 당일에 매도 되지 않고 다음날 시초에 매도 된다.
 
     def stop(self):
         self.log('(Num Opening Bars %2d) Ending Value %.2f' %
