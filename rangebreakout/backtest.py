@@ -5,7 +5,8 @@ from db import dbconn
 
 class OpeningRangeBreakout(backtrader.Strategy):
     params = dict(
-        num_opening_bars = 15 # 오프닝 끝이 되는 분
+        num_opening_bars = 15, # 오프닝 끝이 되는 분
+        period= 5
     )
 
     def __init__(self):
@@ -14,7 +15,10 @@ class OpeningRangeBreakout(backtrader.Strategy):
         self.opening_high_low_range = 0
         self.bought_today = False
         self.order = None
+        # self.rsi = backtrader.indicators.RSI_SMA(self.data.close, period=21)
+        self.sma1 = backtrader.indicators.SMA(self.datas[0].close, period=self.params.period)
 
+        print("init end")
     def log(self, txt, dt=None):
         if dt is None:
             dt = self.datas[0].datetime.datetime()
@@ -28,12 +32,13 @@ class OpeningRangeBreakout(backtrader.Strategy):
 
         # Check if an order has been completed
         if order.status in [order.Completed]:
-            order_details = f"매매가격: {order.executed.price}, Cost: {order.executed.value}, 수수료: {order.executed.comm}, 매매수량: {order.executed.size:,.0f}, 자산: {cerebro.broker.getvalue():,.0f}"
+            order_details = f"매매가격: {order.executed.price}, Cost: {order.executed.value}, 수수료: {order.executed.comm}, 매매수량: {order.executed.size}, 자산: {cerebro.broker.getvalue():,.0f}, SMA: {self.sma1[0]}"
 
             if order.isbuy():
                 self.log(f"매수: {order_details}")
             else:  # Sell
-                self.log(f"매도: {order_details}")
+                profit = (order.executed.price * abs(order.executed.size)) - order.executed.value
+                self.log(f"매도: {order_details}, 수익: {profit}")
 
         elif order.status in [order.Canceled, order.Margin, order.Rejected]:
             self.log('Order Canceled/Margin/Rejected')
@@ -96,7 +101,7 @@ class OpeningRangeBreakout(backtrader.Strategy):
 
 if __name__ == '__main__':
 
-    start_date = '2022-08-21'
+    start_date = '2023-05-21'
     end_date = '2023-08-25'
 
     mk = dbconn.MarketDB()
@@ -107,7 +112,8 @@ if __name__ == '__main__':
     cerebro = backtrader.Cerebro()
     cerebro.broker.setcash(1000000)
     # cerebro.broker.setcommission(commission=0.0014)  # ④
-    cerebro.addsizer(backtrader.sizers.PercentSizer, percents=95)
+    # cerebro.addsizer(backtrader.sizers.PercentSizer, percents=95)
+    cerebro.addsizer(backtrader.sizers.FixedSize, stake=10)
     cerebro.adddata(data)
     cerebro.addstrategy(OpeningRangeBreakout)
 
