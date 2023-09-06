@@ -6,7 +6,7 @@ start_date = '2020-05-01'
 end_date = '2023-04-01'
 
 mk = dbconn.MarketDB()
-new_gs = mk.get_daily_stock_price('005930', start_date, end_date)
+new_gs = mk.get_daily_stock_price('005930', start_date, end_date, 'S')
 
 # Moving average
 ma5 = new_gs['endPrice'].rolling(window=5).mean()

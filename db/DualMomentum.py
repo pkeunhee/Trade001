@@ -13,7 +13,7 @@ class DualMomentum:
         self.allMap = {}
 
         for code in stockCorpDf.index:
-            corpDf = self.mk.get_daily_stock_price(code, start_date, end_date)
+            corpDf = self.mk.get_daily_stock_price(code, start_date, end_date, 'S')
             self.allMap[code] = corpDf
 
         print("init completed")

@@ -72,8 +72,8 @@ class VolatilityBreakout(bt.Strategy):
 
 
 if __name__ == '__main__':
-    start_date = '2023-05-21'
-    end_date = '2023-08-25'
+    start_date = '2023-01-01'
+    end_date = '2023-03-31'
     code = '005930'
 
     mk = dbconn.MarketDB()
@@ -89,7 +89,15 @@ if __name__ == '__main__':
     cerebro.adddata(data)
     cerebro.addstrategy(VolatilityBreakout)
 
+    startAmt = cerebro.broker.getvalue()
     print(f'Initial Portfolio Value : {cerebro.broker.getvalue():,.0f} KRW')
+
     cerebro.run()
+
+    endAmt = cerebro.broker.getvalue()
     print(f'Final Portfolio Value   : {cerebro.broker.getvalue():,.0f} KRW')
+
+    profit = (endAmt - startAmt) / startAmt * 100
+    print(f'수익률 : {profit}% KRW')
+
     cerebro.plot(style='candlestick')

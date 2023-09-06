@@ -10,7 +10,7 @@ start_date = '2020-05-01'
 end_date = '2023-04-01'
 
 mk = dbconn.MarketDB()
-df = mk.get_daily_stock_price('035420', start_date, end_date)
+df = mk.get_daily_stock_price('035420', start_date, end_date, 'S')
 
 ema60 = df.endPrice.ewm(span=60).mean()
 ema130 = df.endPrice.ewm(span=130).mean()

@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import dbconn
 
-start_date = '2020-05-01'
-end_date = '2023-04-01'
+start_date = '2023-01-01'
+end_date = '2023-08-25'
 
 mk = dbconn.MarketDB()
-df = mk.get_daily_stock_price('005930', start_date, end_date)
+df = mk.get_daily_stock_price('005930', start_date, end_date, 'S')
   
 df['MA20'] = df['endPrice'].rolling(window=20).mean()  # ①
 df['stddev'] = df['endPrice'].rolling(window=20).std() # ②

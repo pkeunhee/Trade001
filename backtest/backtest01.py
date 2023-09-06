@@ -6,7 +6,7 @@ from db import dbconn
 
 class MyStrategy(bt.Strategy):
     params = dict(
-        period=20
+        period = 20
     )
 
     def __init__(self):
@@ -45,7 +45,7 @@ class MyStrategy(bt.Strategy):
         self.log('OPERATION PROFIT, GROSS %.2f, net %.2f' % (trade.pnl, trade.pnlcomm))
 
     def next(self):
-        self.log('Close, %.2f' % self.dataclose[0])
+        # self.log('Close, %.2f' % self.dataclose[0])
 
         if self.order:
             return
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     end_date = '2023-08-25'
 
     mk = dbconn.MarketDB()
-    df = mk.get_daily_stock_price('005930', start_date, end_date)
+    df = mk.get_daily_stock_price('005930', start_date, end_date, 'S')
     df = df.drop(['code', 'date', 'name'], axis=1)
     df.columns = ['close', 'open', 'high', 'low', 'volume']
 
@@ -81,7 +81,15 @@ if __name__ == '__main__':
 
     # strats = cerebro.optstrategy(OpeningRangeBreakout, num_opening_bars=[15, 30, 60])
 
-    print(f'Initial Portfolio Value : {cerebro.broker.getvalue():,.0f} KRW')
+    startAmt = cerebro.broker.getvalue()
+
+    print(f'Initial Portfolio Value : {startAmt:,.0f} KRW')
     cerebro.run()
-    print(f'Final Portfolio Value   : {cerebro.broker.getvalue():,.0f} KRW')
+
+    endAmt = cerebro.broker.getvalue()
+    print(f'Final Portfolio Value   : {endAmt:,.0f} KRW')
+
+    profit = (endAmt - startAmt) / startAmt * 100
+    print(f'수익률 : {profit}% KRW')
+
     cerebro.plot(style='candlestick')

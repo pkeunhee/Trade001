@@ -20,7 +20,7 @@ start_date = '2022-01-03'
 end_date = '2023-08-18'
 
 mk = dbconn.MarketDB()
-corpDf = mk.get_daily_stock_price(code, start_date, end_date)
+corpDf = mk.get_daily_stock_price(code, start_date, end_date, 'S')
 corpDf2 = corpDf.drop(['code', 'date', 'name'], axis=1)
 corpDf2.columns = ['close', 'open', 'high', 'low', 'volume']
 

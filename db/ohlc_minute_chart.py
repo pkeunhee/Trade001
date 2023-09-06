@@ -7,7 +7,7 @@ import matplotlib.dates as mdates
 import dbconn
 
 start_date = '2022-08-01'
-end_date = '2023-08-26'
+end_date = '2023-09-03'
 
 mk = dbconn.MarketDB()
 df = mk.get_minute_stock_price('005930', start_date, end_date)

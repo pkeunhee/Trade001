@@ -24,7 +24,7 @@ class MarketDB:
         df.index = df['code']
         return df
 
-    def get_daily_stock_price(self, code, start_date=None, end_date=None):
+    def get_daily_stock_price(self, code, start_date=None, end_date=None, type=None):
         sql = \
             f"SELECT " \
             f"sp.code as code, " \
@@ -38,7 +38,7 @@ class MarketDB:
             f"FROM stock_date_point sp JOIN stock_corp sc " \
             f"WHERE sp.code = sc.code " \
             f"AND sp.code = '{code}'" \
-            f"AND sc.type = 'S' " \
+            f"AND sc.type = '{type}' " \
             f"AND `date` BETWEEN '{start_date}' AND '{end_date}'"
 
         df = pd.read_sql(sql, self.conn)
@@ -77,6 +77,12 @@ class MarketDB:
               f" (code, `date`, endPrice, tradeCnt, regDate)" \
               f" VALUES" \
               f" ('{code}', '{date}', '{price}', '{tradeCnt}', now())"
+
+    def insertStockDatePoint2(self, code, date, open, high, low, close, tradeCnt):
+        sql = f"INSERT IGNORE INTO stock_date_point" \
+              f" (code, `date`, startPrice, highPrice, lowPrice, endPrice, tradeCnt, regDate)" \
+              f" VALUES" \
+              f" ('{code}', '{date}', '{open}', '{high}', '{low}', '{close}', '{tradeCnt}', now())"
 
         with self.conn.cursor() as curs:
             curs.execute(sql)

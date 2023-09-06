@@ -2,10 +2,9 @@ import backtrader, pandas
 from datetime import date, datetime, time, timedelta
 from db import dbconn
 
-
 class OpeningRangeBreakout(backtrader.Strategy):
     params = dict(
-        num_opening_bars = 15, # 오프닝 끝이 되는 분
+        num_opening_bars = 15, # 개장 ~ 기준 시간(분). 범위로 잡을 시간
         period= 5
     )
 
@@ -101,7 +100,7 @@ class OpeningRangeBreakout(backtrader.Strategy):
 
 if __name__ == '__main__':
 
-    start_date = '2023-05-21'
+    start_date = '2023-01-21'
     end_date = '2023-08-25'
 
     mk = dbconn.MarketDB()
@@ -117,9 +116,15 @@ if __name__ == '__main__':
     cerebro.adddata(data)
     cerebro.addstrategy(OpeningRangeBreakout)
 
-    # strats = cerebro.optstrategy(OpeningRangeBreakout, num_opening_bars=[15, 30, 60])
-
+    startAmt = cerebro.broker.getvalue()
     print(f'Initial Portfolio Value : {cerebro.broker.getvalue():,.0f} KRW')
+
     cerebro.run()
+
+    endAmt = cerebro.broker.getvalue()
     print(f'Final Portfolio Value   : {cerebro.broker.getvalue():,.0f} KRW')
+
+    profit = (endAmt - startAmt) / startAmt * 100
+    print(f'수익률 : {profit}% KRW')
+
     cerebro.plot(style='candlestick')

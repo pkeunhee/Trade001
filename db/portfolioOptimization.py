@@ -14,7 +14,7 @@ stocks = ['005930', '035420', '005380']
 df = pd.DataFrame()
 
 for s in stocks:
-    df1 = mk.get_daily_stock_price(s, start_date, end_date)
+    df1 = mk.get_daily_stock_price(s, start_date, end_date, 'S')
     df[s] = df1['endPrice']
 
 
