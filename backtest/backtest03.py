@@ -7,6 +7,16 @@ import pandas as pd
 from db import dbconn
 
 
+class Report:
+    code = None
+    name = None
+    profit = 0
+
+    def __init__(self, code, name, profit):
+        self.code = code
+        self.name = name
+        self.profit = profit
+
 class MyStrategy(bt.Strategy):
     params = dict(
         fast_ma_period=10,
@@ -90,10 +100,29 @@ class MyStrategy(bt.Strategy):
                 self.take_price = self.data.close[0] * (1.0 + self.params.take_profit)
 
 
+def summary(rtnSumm):
+    winCnt = 0
+    loseCnt = 0
+    winPer = 0
+    losePer = 0
+
+    for key, value in rtnSumm.items():
+        print(f'수익률 : {value.name} / {value.code}: {value.profit:,.0f}% KRW')
+        if value.profit > 0:
+            winCnt = winCnt + 1
+            winPer = winPer + 1
+        else:
+            loseCnt = loseCnt + 1
+            losePer = losePer + 1
+
+    print(f'이긴 게임수: {winCnt}, 수익률합: {winPer}, 진 게임수: {loseCnt}, 손실 수익률합: {losePer}')
+
+
+
 if __name__ == '__main__':
     start_date = '2020-01-02'
     end_date = '2023-08-31'
-    test = True
+    test = False
     corpList = None
 
     mk = dbconn.MarketDB()
@@ -113,6 +142,8 @@ if __name__ == '__main__':
         corpList = pd.DataFrame(corpList, columns=['code', 'name'])
     else:
         corpList = mk.get_all_stock_corp()
+
+    rtnSumm = {}
 
     for idx, row in corpList.iterrows():
         code = row['code']
@@ -144,4 +175,11 @@ if __name__ == '__main__':
         print(f'수익률 : {name} / {code}: {profit}% KRW')
         print('--------------------------------------------------------------------------------------------------------------')
 
-        cerebro.plot(style='candlestick')
+        rtnSumm[code] = Report(code, name, profit)
+
+
+        # cerebro.plot(style='candlestick')
+
+    summary(rtnSumm)
+
+
