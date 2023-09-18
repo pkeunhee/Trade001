@@ -10,7 +10,8 @@ mk = dbconn.MarketDB()
 
 corpDict = {
     '^NDX': 'NDX',
-    'BTC-USD': 'BITCOIN_USD'
+    'BTC-USD': 'BITCOIN_USD',
+    '^TNX': 'TNX'
 }
 
 startDate = datetime.combine(date.today() - timedelta(14), datetime.min.time())
